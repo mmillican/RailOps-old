@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using RailOps.Shared.Domain.Roster;
 
 namespace RailOps.Shared.Data
@@ -20,10 +21,26 @@ namespace RailOps.Shared.Data
             : base (options)
         {
         }
+    }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public class RailOpsContextFactory : IDesignTimeDbContextFactory<RailOpsContext>
+    {
+        public RailOpsContext CreateDbContext(string[] args)
         {
-            optionsBuilder.UseSqlite("Data Source=RailOps.db");
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{environment}.json", optional: true)
+                .Build();
+
+            var connString = configuration.GetConnectionString("RailOps");
+
+            var optionsBuilder = new DbContextOptionsBuilder<RailOpsContext>();
+            optionsBuilder.UseSqlServer(connString);
+
+            return new RailOpsContext(optionsBuilder.Options);
         }
     }
 }

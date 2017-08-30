@@ -12,14 +12,15 @@ using System;
 namespace RailOps.Shared.Migrations
 {
     [DbContext(typeof(RailOpsContext))]
-    [Migration("20170822052924_InitialRoster")]
-    partial class InitialRoster
+    [Migration("20170830050618_InitialRosterMigration")]
+    partial class InitialRosterMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.0-rtm-26452");
+                .HasAnnotation("ProductVersion", "2.0.0-rtm-26452")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("RailOps.Shared.Domain.Roster.Car", b =>
                 {
