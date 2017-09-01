@@ -30,6 +30,17 @@ namespace RailOps.Api
 
             services.AddDbContext<RailOpsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("RailOps")));
 
+            services.AddCors(options =>
+            {
+                // this defines a CORS policy called "default"
+                options.AddPolicy("default", policy =>
+                {
+                    policy.WithOrigins("http://localhost:51717")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Rail Ops API", Version = "v1" });
@@ -43,6 +54,8 @@ namespace RailOps.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("default");
 
             app.UseMvc(routes =>
             {
