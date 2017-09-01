@@ -2,6 +2,9 @@
     <h1>Roads</h1>
 </div>
 
+<div *ngIf="error" class="alert alert-danger">{{error}}</div>
+<div *ngIf="success" class="alert alert-success">{{success}}</div>
+
 <table class="table table-condensed table-striped">
     <tr>
         <th>Name</th>
@@ -16,9 +19,6 @@
 <div class="panel panel-default">
     <div class="panel-heading"><h4>Add new road</h4></div>
     <div class="panel-body">
-
-        <div *ngIf="error" class="alert alert-danger">{{error}}</div>
-
         <form name="form" (ngSubmit)="f.form.valid && saveRoad()" #f="ngForm" novalidate>
             <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !name.valid }">
                 <label for="name">Road name</label>
