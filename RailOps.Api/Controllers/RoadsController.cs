@@ -57,6 +57,7 @@ namespace RailOps.Api.Controllers
             {
                 var roads = await _dbContext.Roads
                     .Where(x => (string.IsNullOrEmpty(name) || x.Name.Contains(name)))
+                    .OrderBy(x => x.Name)
                     .Select(x => new RoadModel
                     {
                         Id = x.Id,
@@ -119,6 +120,28 @@ namespace RailOps.Api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Could not update road ID {id} ({model.Name})");
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            // TODO: Verify it's not associated to any rolling stock
+            try
+            {
+                var road = await _dbContext.Roads.FindAsync(id);
+                if (road == null)
+                    return NotFound();
+
+                _dbContext.Roads.Remove(road);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Could not delete road ID {id}");
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
         }
